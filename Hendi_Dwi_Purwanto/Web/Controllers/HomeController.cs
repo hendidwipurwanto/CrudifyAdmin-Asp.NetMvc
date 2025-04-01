@@ -10,18 +10,18 @@ namespace Web.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly IGenericRepository<Product> _genericRepository;
-    public HomeController(ILogger<HomeController> logger,IGenericRepository<Product> genericRepository)
+    private readonly IGenericService<Product> _genericService;
+    public HomeController(ILogger<HomeController> logger,IGenericService<Product> genericService)
     {
         _logger = logger;
-        _genericRepository = genericRepository;
+        _genericService = genericService;
     }
 
     public async Task<IActionResult> Index()
     {
-        var categoriesWithProducts = await _genericRepository.GetAllAsync(c => c.Category);
+        var categoriesWithProducts = await _genericService.GetAllAsync(c => c.Category);
 
-        var model = await _genericRepository.GetAllAsync();
+        var model = await _genericService.GetAllAsync();
         return View();
     }
 

@@ -1,3 +1,4 @@
+using Application.Services;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -6,7 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped(typeof(Infrastructure.Repositories.IGenericService<>), typeof(GenericRepository<>));
+builder.Services.AddScoped(typeof(Application.Services.IGenericService<>), typeof(GenericService<>));
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
