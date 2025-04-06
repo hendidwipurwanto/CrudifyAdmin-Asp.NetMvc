@@ -12,12 +12,20 @@ namespace Web.Controllers
         }
         public ActionResult Login()
         {
+            throw new Exception("testing error");     
             return View();
         }
 
         public ActionResult Register()
         {
-            return View();
+            try
+            {
+                throw new Exception("Gagal menyimpan data karena kesalahan sistem.");
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Server", "Error");
+            }
         }
 
         // GET: AccountController/Details/5

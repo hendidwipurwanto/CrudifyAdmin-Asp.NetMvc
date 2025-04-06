@@ -1,3 +1,4 @@
+using Application.Middlewares;
 using Application.Services;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
@@ -22,13 +23,13 @@ builder.Services.AddControllersWithViews();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsDevelopment()) // remove the ! to see the details of errors
 {
     app.UseMigrationsEndPoint();
 }
 else
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Error/Server");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
@@ -37,12 +38,14 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseMiddleware<CustomErrorHandlingMiddleware>();
+app.UseStatusCodePagesWithReExecute("/Error/HttpStatus", "?code={0}");
 
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=dashboard}/{action=index}/{id?}");
 app.MapRazorPages();
 
 app.Run();
