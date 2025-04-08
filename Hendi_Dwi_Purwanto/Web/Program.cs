@@ -1,9 +1,11 @@
 using Application.Middlewares;
 using Application.Services;
+using Domain;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,18 +14,27 @@ builder.Services.AddScoped(typeof(Infrastructure.Repositories.IGenericService<>)
 builder.Services.AddScoped(typeof(Application.Services.IGenericService<>), typeof(GenericService<>));
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+});
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages(); // <-- ini penting buat Identity & Razor Pages
+
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment()) // remove the ! to see the details of errors
+if (app.Environment.IsDevelopment()) // remove the ! to see the details of errors
 {
     app.UseMigrationsEndPoint();
 }
@@ -38,14 +49,14 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseMiddleware<CustomErrorHandlingMiddleware>();
+//app.UseMiddleware<CustomErrorHandlingMiddleware>();
 app.UseStatusCodePagesWithReExecute("/Error/HttpStatus", "?code={0}");
 
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=dashboard}/{action=index}/{id?}");
+    pattern: "{controller=account}/{action=register}/{id?}");
 app.MapRazorPages();
 
 app.Run();

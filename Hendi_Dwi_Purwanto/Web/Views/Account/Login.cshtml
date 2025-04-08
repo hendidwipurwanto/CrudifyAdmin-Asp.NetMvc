@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Domain.ViewModels.LoginViewModel
+@{
     Layout = null;
 }
 <!DOCTYPE html>
@@ -20,17 +21,29 @@
                 <!-- Login Form -->
                 <div class="card p-4 shadow-lg" id="loginForm">
                     <h3 class="text-center">Login</h3>
-                    <form>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <ul class="text-danger">
+                            @foreach (var modelError in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <li>@modelError.ErrorMessage</li>
+                            }
+                        </ul>
+                    }
+
+                    <form asp-action="login" asp-controller="account" method="post">
+                        @Html.AntiForgeryToken()
                         <div class="mb-3">
                             <label for="loginEmail" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="loginEmail" required>
+                            <input type="email" class="form-control" id="loginEmail" asp-for="Email">
                         </div>
                         <div class="mb-3">
                             <label for="loginPassword" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="loginPassword" required>
+                            <input type="password" class="form-control" id="loginPassword" asp-for="Password">
                         </div>
+   
                         <button type="submit" class="btn btn-primary w-100">Login</button>
-                        <p class="text-center mt-3">Don't have an account? <a href="/register.html">Register</a></p>
+                        <p class="text-center mt-3">Don't have an account? <a href="@Url.Action("register","account")">Register</a></p>
                     </form>
                 </div>
             </div>

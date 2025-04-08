@@ -1,4 +1,4 @@
-﻿
+﻿@model Domain.ViewModels.RegisterViewModel
 @{
     Layout = null;
 }
@@ -17,25 +17,35 @@
 
             <div class="card p-4 shadow-lg" id="registerForm">
                 <h3 class="text-center">Register</h3>
-                <form>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <ul class="text-danger">
+                        @foreach (var modelError in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <li>@modelError.ErrorMessage</li>
+                        }
+                    </ul>
+                }
+                <form asp-action="Register" asp-controller="account" method="post">
+                    @Html.AntiForgeryToken()
                     <div class="mb-3">
-                        <label for="registerName" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="registerName" required>
+                        <label for="UserName" class="form-label">User name</label>
+                        <input type="text" class="form-control" required asp-for="UserName">
                     </div>
                     <div class="mb-3">
                         <label for="registerEmail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="registerEmail" required>
+                        <input type="email" class="form-control" id="registerEmail" asp-for="Email">
                     </div>
                     <div class="mb-3">
                         <label for="registerPassword" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="registerPassword" required>
+                        <input type="password" class="form-control" id="registerPassword" asp-for="Password">
                     </div>
                     <div class="mb-3">
                         <label for="confirmPassword" class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" required>
+                        <input type="password" class="form-control" id="confirmPassword" asp-for="ConfirmPassword">
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Register</button>
-                    <p class="text-center mt-3">Already have an account? <a href="/login.html">Login</a></p>
+                    <p class="text-center mt-3">Already have an account? <a href="@Url.Action("login","account")">Login</a></p>
                 </form>
             </div>
         </div>
