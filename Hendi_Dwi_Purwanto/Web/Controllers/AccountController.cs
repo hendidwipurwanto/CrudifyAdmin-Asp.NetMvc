@@ -80,7 +80,7 @@ namespace Web.Controllers
 
 
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();

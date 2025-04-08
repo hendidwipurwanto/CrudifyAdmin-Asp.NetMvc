@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-
+using Microsoft.AspNetCore.Identity;
 namespace Web.Controllers
 {
     public class DashboardController : Controller
@@ -8,6 +8,7 @@ namespace Web.Controllers
         // GET: DashboardController
         public ActionResult Index()
         {
+            ViewBag.Username = User.Identity.Name;
             return View();
         }
 
